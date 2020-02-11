@@ -1,10 +1,10 @@
 # AETN
 The implementation of the AutoEncoder-coupled Transformer Network by TensorFlow
 
-# Introduction
+## Introduction
 
-# System requirements
+## System requirements
 
-# Data preprocesses
+## Data preprocesses
 
-# Train different versions of the AETN
+## Train different versions of the AETN
