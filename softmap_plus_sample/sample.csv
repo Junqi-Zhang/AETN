@@ -1,0 +1,10 @@
+soft_package_name,soft_name,type,soft_id_org,soft_id,type_idx
+qq0,QQ,social,0,0,0
+qq1,QQ,social,1,0,0
+wechat,wechat,social,2,1,0
+mail,mail,office,3,2,1
+googlemap,goolemap,map,4,3,2
+linkedin,linkedin,business,5,4,3
+word,word,office,6,5,1
+steam,steam,game,7,6,4
+news,news,news,8,7,5
