@@ -44,7 +44,7 @@ def dataset_generator(params, cycle_length, num_parallel_calls, prefetch):
                         values=tf.ones_like(number, dtype=tf.int8),
                         dense_shape=dense_shape)
 
-        # process image
+        # process retention
         input_data['image'] = tf.sparse.to_dense(tf.cond(tf.strings.length(line_split[data_map['image']]) > 0,
                                 true_fn=lambda: _string_to_sparse(line_split[data_map['image']], dense_shape=[num_softid]),
                                 false_fn=lambda: tf.sparse.SparseTensor(
@@ -61,7 +61,7 @@ def dataset_generator(params, cycle_length, num_parallel_calls, prefetch):
                                             dense_shape=[num_label])))
 
 
-        # process lists
+        # process installation and uninstallation
         def _string_to_list(string, padding):
             number = tf.strings.to_number(
                             tf.strings.split([string], sep=',').values,

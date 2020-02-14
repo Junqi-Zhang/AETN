@@ -134,21 +134,24 @@ def get_model(features, labels, mode, params):
             export_outputs={'outputs': tf.estimator.export.PredictOutput(predictions)})
 
     # define loss
-    loss_dae = get_loss(loss_type_dae)(inputs[0], logits_dae, weight_positive_dae)
-    loss_image = get_loss(loss_type_image)(inputs[0], logits_image, weight_positive_image)
+    loss_dae = get_loss(loss_type_dae)(inputs[0], logits_dae, weight_positive_dae) # loss for auxiliary retention reconsrtuction
+    loss_image = get_loss(loss_type_image)(inputs[0], logits_image, weight_positive_image) # loss for main retention reconstruction
 
     new_one_hot = tf.one_hot(tf.to_int32(inputs[2]), NUM_SOFTID, dtype=tf.int32)
-    loss_new = get_loss(loss_type_his)(new_one_hot, logits_new, weight_loss_his*inputs[3])
+    loss_new = get_loss(loss_type_his)(new_one_hot, logits_new, weight_loss_his*inputs[3]) # loss for installation reconstruction
 
     loss_one_hot = tf.one_hot(tf.to_int32(inputs[7]), NUM_SOFTID, dtype=tf.int32)
-    loss_loss = get_loss(loss_type_his)(loss_one_hot, logits_loss, weight_loss_his*inputs[8])
+    loss_loss = get_loss(loss_type_his)(loss_one_hot, logits_loss, weight_loss_his*inputs[8]) # loss for uninstallation reconstruction
 
     new_bert_one_hot = tf.one_hot(tf.batch_gather(tf.to_int32(inputs[2]), tf.to_int32(inputs[4])), NUM_SOFTID, dtype=tf.int32)
+    # loss for masked app prediction in installtion
     loss_bert_new = get_loss(loss_type_his)(new_bert_one_hot, logits_bert_new, weight_loss_his*tf.batch_gather(inputs[3],tf.to_int32(inputs[4])))
 
     loss_bert_one_hot = tf.one_hot(tf.batch_gather(tf.to_int32(inputs[7]), tf.to_int32(inputs[9])), NUM_SOFTID, dtype=tf.int32)
+    # loss for masked app prediction in uninstalltion
     loss_bert_loss = get_loss(loss_type_his)(loss_bert_one_hot, logits_bert_loss, weight_loss_his*tf.batch_gather(inputs[8],tf.to_int32(inputs[9])))
 
+    # loss for fine-tuning tasks
     loss_classifier = get_loss(loss_type_classifier)(tf.to_float(labels), logits_classifier, weight_positive_classifier)
 
     if alpha_main > 0:

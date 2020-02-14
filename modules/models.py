@@ -339,7 +339,7 @@ class AETN(object):
         # main reconstruction of retention
         img_emb = tf.matmul(user_embeddings,self.bottleneck_weights[1]) + self.bottleneck_biases[1] # (N, d_model)
         img_emb = get_activation('leakyrelu')(img_emb) # (N, d_model)
-        logits_image = tf.matmul(img_emb, self.dae_weights[-1]) + self.dae_biases[-1] # (N, 10000)
+        logits_image = tf.matmul(img_emb, self.dae_weights[-1]) + self.dae_biases[-1] # (N, num_softid)
         model_outputs.append(logits_image)
 
         use_emb = tf.expand_dims(user_embeddings, 1) # (N, 1, 128)
@@ -361,9 +361,9 @@ class AETN(object):
                                                         query_masks=tf.concat([self.newmask, self.lossmask], 1),
                                                         key_masks=tf.concat([self.newmask, self.lossmask], 1))) # (N, 2*length_his, 512)
         # Main reconstruction of the installation and uninstallation
-        logits_new = tf.einsum('ijk,kl->ijl', his_emb[:, :self.length_his, :], self.dae_weights[-1]) + self.dae_biases[-1] # (N, length_his, 10000)
+        logits_new = tf.einsum('ijk,kl->ijl', his_emb[:, :self.length_his, :], self.dae_weights[-1]) + self.dae_biases[-1] # (N, length_his, num_softid)
         model_outputs.append(logits_new)
-        logits_loss = tf.einsum('ijk,kl->ijl', his_emb[:, -self.length_his:, :], self.dae_weights[-1]) + self.dae_biases[-1] # (N, length_his, 10000)
+        logits_loss = tf.einsum('ijk,kl->ijl', his_emb[:, -self.length_his:, :], self.dae_weights[-1]) + self.dae_biases[-1] # (N, length_his, num_softid)
         model_outputs.append(logits_loss)
 
         # Prepare for the future fine-tine tasks
@@ -672,7 +672,7 @@ class VAETN(object):
                 img = tf.matmul(img,w)+b
                 img = get_activation('leakyrelu')(img)
             if i == 3:
-                logits_dae = tf.matmul(img,w)+b # (N, 10000)
+                logits_dae = tf.matmul(img,w)+b # (N, num_softid)
                 model_outputs.append(logits_dae)
 
         img_emb = img_emb + tf.nn.embedding_lookup(self.img_embeddings,
@@ -694,14 +694,14 @@ class VAETN(object):
         user_embeddings = get_activation('tanh')(user_embeddings) # (N, 128)
         model_outputs.append(user_embeddings)
 
-        logits_bert_new = tf.einsum('ijk,kl->ijl', tf.batch_gather(new_emb,self.newbertindex), self.dae_weights[-1]) + self.dae_biases[-1] # (N, 3, 10000)
+        logits_bert_new = tf.einsum('ijk,kl->ijl', tf.batch_gather(new_emb,self.newbertindex), self.dae_weights[-1]) + self.dae_biases[-1] # (N, 3, num_softid)
         model_outputs.append(logits_bert_new)
-        logits_bert_loss = tf.einsum('ijk,kl->ijl', tf.batch_gather(loss_emb,self.lossbertindex), self.dae_weights[-1]) + self.dae_biases[-1] # (N, 3, 10000)
+        logits_bert_loss = tf.einsum('ijk,kl->ijl', tf.batch_gather(loss_emb,self.lossbertindex), self.dae_weights[-1]) + self.dae_biases[-1] # (N, 3, num_softid)
         model_outputs.append(logits_bert_loss)
 
         img_emb = tf.matmul(user_embeddings,self.bottleneck_weights[1]) + self.bottleneck_biases[1] # (N, d_model)
         img_emb = get_activation('leakyrelu')(img_emb) # (N, d_model)
-        logits_image = tf.matmul(img_emb, self.dae_weights[-1]) + self.dae_biases[-1] # (N, 10000)
+        logits_image = tf.matmul(img_emb, self.dae_weights[-1]) + self.dae_biases[-1] # (N, num_softid)
         model_outputs.append(logits_image)
 
         use_emb = tf.expand_dims(user_embeddings, 1) # (N, 1, 128)
@@ -718,9 +718,9 @@ class VAETN(object):
                                                         values=tf.concat([use_emb, new_pos_emb, loss_pos_emb], 1),
                                                         query_masks=tf.concat([self.newmask, self.lossmask], 1),
                                                         key_masks=tf.concat([imgmask, self.newmask, self.lossmask], 1))) # (N, 2*length_his, d_model)
-        logits_new = tf.einsum('ijk,kl->ijl', his_emb[:, :self.length_his, :], self.dae_weights[-1]) + self.dae_biases[-1] # (N, length_his, 10000)
+        logits_new = tf.einsum('ijk,kl->ijl', his_emb[:, :self.length_his, :], self.dae_weights[-1]) + self.dae_biases[-1] # (N, length_his, num_softid)
         model_outputs.append(logits_new)
-        logits_loss = tf.einsum('ijk,kl->ijl', his_emb[:, -self.length_his:, :], self.dae_weights[-1]) + self.dae_biases[-1] # (N, length_his, 10000)
+        logits_loss = tf.einsum('ijk,kl->ijl', his_emb[:, -self.length_his:, :], self.dae_weights[-1]) + self.dae_biases[-1] # (N, length_his, num_softid)
         model_outputs.append(logits_loss)
 
 
