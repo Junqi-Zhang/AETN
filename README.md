@@ -9,10 +9,21 @@ This implementation is a TensorFlow version, supporting multi-GPUs training, and
 * Python >= 3.6.5
 * Numpy >= 1.14.3
 * Pandas >= 0.23.0
-* TensorFlow = 1.12
+* TensorFlow-gpu = 1.12
 * Total memory of GPUs >= 16G
 
-## Data preprocesses
+Attention! The code won't work without GPUs, even if you modify the os.environ["CUDA_VISIBLE_DEVICES"]='' in train.py.
+
+## Components
+1. 'modules/losses.py' for loss functions
+2. 'modules/models.py' where AETN and V-AETN are defined
+3. 'modules/model_fn.py' where the model_fn for the tf.estimator are defined
+4. 'modules/utils.py' including dataset_generator and ModelWrapper
+5. 'train.py' the main code for training models
+6. 'softmap_plus_sample/' a sample folder where the information of apps considered in training process are provided
+7. 'train/valid/test_sample/' sample folders where the training/validation/testing dataset are located
+
+## Data preprocessing
 
 ## Settings in train.py
 * Dataset Path
