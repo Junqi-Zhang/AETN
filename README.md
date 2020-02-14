@@ -1,8 +1,9 @@
 # AETN
-The implementation of the AutoEncoder-coupled Transformer Network by TensorFlow
+The AutoEncoder-coupled Transformer Network is a novel model for generating General-Purpose User Embeddings based on Mobile App Usage.
+We regret that the dataset we use to train and evaluate the models cannot to made public because of user data privacy policy at Tencent.
+To help researchers reproduce our model on their own datasets, we make the implementation details public through this code.
 
-## Introduction
-The AutoEncoder-coupled Transformer Network is a novel model for general-purpose user embedding learning based on mobile app usage. This implementation is a TensorFlow version, supporting multi-GPUs training, and employs the tf.dataset and tf.estimator. You can train the AETN or the V-AETN with optional task of auxiliary retention reconstruction and masked app prediction by run the train.py. Models are defined in the './Module/models.py'.
+This implementation is a TensorFlow version, supporting multi-GPUs training, and employs the tf.data.Dataset and tf.estimator APIs. You can train the AETN or the V-AETN with optional task of auxiliary retention reconstruction and masked app prediction by run the train.py. You can also fine-tune the models with downstream tasks through the codes.
 
 ## System requirements
 * Python >= 3.6.5
