@@ -53,7 +53,7 @@ class AETN(object):
 
         self.num_date = params['num_date']
         self.length_his = params['length_his']
-        self.softmap = params['softmap']
+        self.softmap = params['softmap'] + 1
         self.softmap_vocab = params['softmap_vocab']
 
         self.image_dropout_rate = params.get('image_dropout_rate', 0)
@@ -74,14 +74,14 @@ class AETN(object):
     def parse_inputs(self, inputs):
         self.image = inputs[0] # retention
         # installation
-        self.newdate = tf.to_int32(inputs[1]) # (batch_size, length_his)
-        self.newapp = tf.to_int32(inputs[2]) # (batch_size, length_his)
+        self.newdate = tf.to_int32(inputs[1]) + 1 # (batch_size, length_his)
+        self.newapp = tf.to_int32(inputs[2]) + 1 # (batch_size, length_his)
         self.newmask = tf.to_int32(inputs[3]) # (batch_size, length_his)
         self.newbertindex = tf.to_int32(inputs[4]) # (batch_size, 3)
         self.newbertmask = tf.to_int32(inputs[5]) # (batch_size, length_his)
         # uninstallation
-        self.lossdate = tf.to_int32(inputs[6]) # (batch_size, length_his)
-        self.lossapp = tf.to_int32(inputs[7]) # (batch_size, length_his)
+        self.lossdate = tf.to_int32(inputs[6]) + 1 # (batch_size, length_his)
+        self.lossapp = tf.to_int32(inputs[7]) + 1 # (batch_size, length_his)
         self.lossmask = tf.to_int32(inputs[8]) # (batch_size, length_his)
         self.lossbertindex = tf.to_int32(inputs[9]) # (batch_size, 3)
         self.lossbertmask = tf.to_int32(inputs[10]) # (batch_size, length_his)
@@ -147,12 +147,12 @@ class AETN(object):
                 name=bias_key, shape=[d_out],
                 initializer=tf.truncated_normal_initializer(stddev=0.001)))
 
-        self.app_embeddings = tf.concat([self.dae_weights[0], tf.zeros(shape=[1, self.dae_dims[1]])], 0)
+        self.app_embeddings = tf.concat([tf.zeros(shape=[1, self.dae_dims[1]]), self.dae_weights[0]], 0)
         # date embeddings
         self.position_embeddings = tf.concat(
-            [tf.get_variable(name="position_embeddings", shape=[self.num_date, self.dae_dims[1]],
-                            initializer=tf.contrib.layers.xavier_initializer()),
-            tf.zeros(shape=[1, self.dae_dims[1]])], 0)
+            [tf.zeros(shape=[1, self.dae_dims[1]]), 
+            tf.get_variable(name="position_embeddings", shape=[self.num_date, self.dae_dims[1]],
+                            initializer=tf.contrib.layers.xavier_initializer())], 0)
         # behavior type embeddings
         self.new_embeddings = tf.concat([tf.zeros(shape=[1, self.dae_dims[1]]),
             tf.get_variable(name="new_embeddings", shape=[1, self.dae_dims[1]],
