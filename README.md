@@ -12,7 +12,7 @@ This implementation is a TensorFlow version, supporting multi-GPUs training, and
 * TensorFlow-gpu = 1.12
 * Total memory of GPUs >= 16G
 
-Attention! The code won't work without GPUs, even if you modify the os.environ["CUDA_VISIBLE_DEVICES"]='' in train.py.
+The predict.py can be also run with CPUs.
 
 ## Components
 1. 'modules/losses.py' for loss functions
